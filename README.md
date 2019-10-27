@@ -1,0 +1,2 @@
+# amdfan
+simplefancurve
