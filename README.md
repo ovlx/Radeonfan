@@ -1,2 +1,2 @@
 # amdfan
-simplefancurve
+This is a simple fan control script for amdgpu.
