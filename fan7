@@ -1,0 +1,29 @@
+#!/bin/bash
+ #This script is licensed under gplv2.1 
+ #author: ovlx
+for (( ; ; ))
+
+do
+FANENABLE=$(cat /sys/class/drm/card0/device/hwmon/hwmon*/fan1_enable)
+            if [ "$FANENABLE" = "0" ]; then
+                echo 1 | tee /sys/class/drm/card0/device/hwmon/hwmon*/fan1_enable
+            fi
+            
+PWMOF=0 #Fan pwm Offset, moves curve up or down
+AGR=80 #Curve aggression , lower values result in a more aggressive curve
+ZRPM_TH=52 #zero rpm temp threshold
+
+x=$(cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input)
+y=$((x*(x*20/$AGR)/7000000+$PWMOF))
+
+            if [ "$y" -ge "255" ]; then
+                y=255
+            fi
+            if [ "$x" -le "$((ZRPM_TH*1000))" ]; then
+                y=0
+            fi
+echo "$y" | tee /sys/class/drm/card0/device/hwmon/hwmon*/pwm1
+
+sleep 0.5s
+
+done &
